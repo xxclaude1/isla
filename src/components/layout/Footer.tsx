@@ -18,10 +18,10 @@ const footerLinks = {
     { href: "/vip", label: "VIP & Tables" },
   ],
   company: [
-    { href: "/about", label: "About ISLA" },
-    { href: "/contact", label: "Contact" },
-    { href: "/terms", label: "Terms" },
-    { href: "/privacy", label: "Privacy" },
+    { href: "/events", label: "All Events" },
+    { href: "/tomorrowland", label: "Tomorrowland" },
+    { href: "/clubs", label: "All Clubs" },
+    { href: "/vip", label: "VIP Experience" },
   ],
 };
 
@@ -105,10 +105,10 @@ export function Footer() {
           </ul>
         </div>
 
-        {/* Company */}
+        {/* Quick Links */}
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-[0.08em] text-text-secondary mb-4">
-            Company
+            Quick Links
           </h4>
           <ul className="space-y-2">
             {footerLinks.company.map((link) => (

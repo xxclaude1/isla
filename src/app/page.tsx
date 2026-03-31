@@ -8,67 +8,61 @@ import { getEventBySlug } from "@/lib/events";
 
 const featuredEvents = [
   {
-    id: 1,
+    slug: "carl-cox-unvrs-jun-21",
     name: "Carl Cox",
     club: "UNVRS",
     date: "SUN 21 JUN",
     price: 85,
-    image: "/images/events/carl-cox.jpg",
     availability: 72,
     featured: true,
     genre: "Techno",
   },
   {
-    id: 2,
+    slug: "solomun-plus-1-pacha-jun-07",
     name: "Solomun +1",
     club: "Pacha",
     date: "SUN 07 JUN",
     price: 65,
-    image: "/images/events/solomun.jpg",
     availability: 58,
     featured: false,
     genre: "House",
   },
   {
-    id: 3,
+    slug: "fisher-unvrs-jun-04",
     name: "FISHER",
     club: "UNVRS",
     date: "THU 04 JUN",
     price: 75,
-    image: "/images/events/fisher.jpg",
     availability: 85,
     featured: false,
     genre: "Tech House",
   },
   {
-    id: 4,
+    slug: "black-coffee-hi-ibiza-jun-06",
     name: "Black Coffee",
     club: "Hï Ibiza",
     date: "SAT 06 JUN",
     price: 90,
-    image: "/images/events/black-coffee.jpg",
     availability: 44,
     featured: true,
     genre: "Afro House",
   },
   {
-    id: 5,
+    slug: "circoloco-dc10-jun-01",
     name: "Circoloco",
     club: "DC-10",
     date: "MON 01 JUN",
     price: 56,
-    image: "/images/events/circoloco.jpg",
     availability: 91,
     featured: false,
     genre: "Underground",
   },
   {
-    id: 6,
+    slug: "calvin-harris-ushuaia-may-30",
     name: "Calvin Harris",
     club: "Ushuaïa",
     date: "FRI 30 MAY",
     price: 95,
-    image: "/images/events/calvin-harris.jpg",
     availability: 88,
     featured: false,
     genre: "EDM",
@@ -293,11 +287,11 @@ export default function Home() {
           >
             {featuredEvents.map((event) => (
               <motion.div
-                key={event.id}
+                key={event.slug}
                 variants={fadeUp}
                 className={event.featured ? "md:col-span-2 lg:col-span-1 lg:row-span-2" : ""}
               >
-                <Link href={`/events/${event.id}`}>
+                <Link href={`/events/${event.slug}`}>
                   <GlassCard
                     className={`relative overflow-hidden group ${
                       event.featured ? "h-full min-h-[380px]" : "min-h-[200px]"

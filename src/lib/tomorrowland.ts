@@ -35,7 +35,7 @@ export const tomorrowlandDates: TmlDate[] = [
   { id: "tml-0506", date: "2026-05-06", guests: ["Lineup TBA"], availability: 35, priceFrom: 55, soldOut: false },
   { id: "tml-0513", date: "2026-05-13", guests: ["Oliver Heldens"], availability: 42, priceFrom: 55, soldOut: false },
   { id: "tml-0520", date: "2026-05-20", guests: ["Robin Schulz"], availability: 48, priceFrom: 55, soldOut: false },
-  { id: "tml-0527", date: "2026-05-27", guests: ["Henri PFR", "Novah"], availability: 30, priceFrom: 55, soldOut: false },
+  { id: "tml-0527", date: "2026-05-27", guests: ["Henri PFR", "Novah"], availability: 0, priceFrom: 55, soldOut: true },
   { id: "tml-0603", date: "2026-06-03", guests: ["Afrojack", "Bassjackers"], availability: 52, priceFrom: 60, soldOut: false },
   { id: "tml-0610", date: "2026-06-10", guests: ["Alok", "MATTN"], availability: 55, priceFrom: 60, soldOut: false },
   { id: "tml-0617", date: "2026-06-17", guests: ["Vini Vici", "HALO"], availability: 60, priceFrom: 60, soldOut: false },
@@ -48,7 +48,7 @@ export const tomorrowlandDates: TmlDate[] = [
   { id: "tml-0805", date: "2026-08-05", guests: ["Lineup TBA"], availability: 80, priceFrom: 75, soldOut: false },
   // Aug 12 — no event
   { id: "tml-0819", date: "2026-08-19", guests: ["Yves V"], availability: 78, priceFrom: 75, soldOut: false },
-  { id: "tml-0826", date: "2026-08-26", guests: ["Steve Aoki", "Joel Corry"], availability: 88, priceFrom: 80, soldOut: false, highlighted: true },
+  { id: "tml-0826", date: "2026-08-26", guests: ["Steve Aoki", "Joel Corry"], availability: 0, priceFrom: 80, soldOut: true, highlighted: true },
   // Sep 2 — no event
   { id: "tml-0909", date: "2026-09-09", guests: ["Lineup TBA"], availability: 70, priceFrom: 70, soldOut: false },
   { id: "tml-0916", date: "2026-09-16", guests: ["Lineup TBA"], availability: 62, priceFrom: 65, soldOut: false },
@@ -97,7 +97,7 @@ export const tomorrowlandPackages: TmlPackage[] = [
       "Dynamic pricing — earlier = cheaper",
     ],
     popular: false,
-    cta: "Browse Dates",
+    cta: "Get Tickets",
   },
   {
     id: "tml-5pack",
@@ -145,7 +145,7 @@ export const tomorrowlandPackages: TmlPackage[] = [
       "Best views of the stage",
     ],
     popular: false,
-    cta: "Inquire",
+    cta: "Get VIP Pass",
   },
 ];
 

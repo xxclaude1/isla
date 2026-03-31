@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button, GlassCard, Badge, AvailabilityBar } from "@/components/ui";
+import { useIslaStore } from "@/store/useIslaStore";
 import {
   tomorrowlandDates,
   tomorrowlandArtists,
@@ -48,6 +49,41 @@ function getMonth(dateStr: string): MonthFilter {
 
 export default function TomorrowlandPage() {
   const [monthFilter, setMonthFilter] = useState<MonthFilter>("all");
+  const [addedDates, setAddedDates] = useState<Set<string>>(new Set());
+  const [addedPkgs, setAddedPkgs] = useState<Set<string>>(new Set());
+  const addToCart = useIslaStore((s) => s.addToCart);
+
+  const handleAddDate = (d: (typeof tomorrowlandDates)[number]) => {
+    const dateFormatted = new Date(d.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+    addToCart({
+      eventSlug: `tomorrowland-${d.id}`,
+      eventName: `Tomorrowland Ibiza — ${dateFormatted}`,
+      clubName: "Ushuaïa Ibiza",
+      date: d.date,
+      tierName: "General Admission",
+      tierId: `${d.id}-ga`,
+      price: d.priceFrom,
+      quantity: 1,
+    });
+    setAddedDates((prev) => new Set(prev).add(d.id));
+    setTimeout(() => setAddedDates((prev) => { const n = new Set(prev); n.delete(d.id); return n; }), 2000);
+  };
+
+  const handleAddPackage = (pkg: (typeof tomorrowlandPackages)[number]) => {
+    const priceNum = parseInt(pkg.price.replace(/[^0-9]/g, ""), 10);
+    addToCart({
+      eventSlug: `tomorrowland-${pkg.id}`,
+      eventName: `Tomorrowland Ibiza — ${pkg.name}`,
+      clubName: "Ushuaïa Ibiza",
+      date: "2026-05-06",
+      tierName: pkg.name,
+      tierId: pkg.id,
+      price: priceNum,
+      quantity: 1,
+    });
+    setAddedPkgs((prev) => new Set(prev).add(pkg.id));
+    setTimeout(() => setAddedPkgs((prev) => { const n = new Set(prev); n.delete(pkg.id); return n; }), 2000);
+  };
 
   const filteredDates =
     monthFilter === "all"
@@ -267,8 +303,12 @@ export default function TomorrowlandPage() {
                       ))}
                     </ul>
 
-                    <Button variant={pkg.popular ? "primary" : "glass"} className="w-full mt-auto">
-                      {pkg.cta}
+                    <Button
+                      variant={pkg.popular ? "primary" : "glass"}
+                      className="w-full mt-auto"
+                      onClick={() => handleAddPackage(pkg)}
+                    >
+                      {addedPkgs.has(pkg.id) ? "Added to Cart ✓" : pkg.cta}
                     </Button>
                   </div>
                 </GlassCard>
@@ -364,7 +404,9 @@ export default function TomorrowlandPage() {
                           {d.soldOut ? (
                             <Badge variant="sold-out">Sold Out</Badge>
                           ) : (
-                            <Button size="sm">Tickets</Button>
+                            <Button size="sm" onClick={() => handleAddDate(d)}>
+                              {addedDates.has(d.id) ? "Added ✓" : "Tickets"}
+                            </Button>
                           )}
                         </div>
 
