@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Button, GlassCard, Badge, AvailabilityBar } from "@/components/ui";
+import { ViewerCount } from "@/components/ui/ViewerCount";
 import { getRelatedEvents, type EventData } from "@/lib/events";
+import { useIslaStore } from "@/store/useIslaStore";
 
 const clubAccents: Record<string, string> = {
   pacha: "#FF2D55",
@@ -35,6 +37,16 @@ export function EventPageClient({ event }: { event: EventData }) {
     return first?.id || null;
   });
   const [quantity, setQuantity] = useState(1);
+  const [addedFeedback, setAddedFeedback] = useState(false);
+
+  const {
+    addToCart,
+    addRecentlyViewed,
+    updateUrgency,
+    getUrgencyDelta,
+    getNewlySoldOutTiers,
+    addToast,
+  } = useIslaStore();
 
   const accent = clubAccents[event.clubSlug] || "#7F00FF";
   const related = getRelatedEvents(event);
@@ -47,6 +59,52 @@ export function EventPageClient({ event }: { event: EventData }) {
     month: "long",
     year: "numeric",
   });
+
+  // Track recently viewed + urgency on mount
+  useEffect(() => {
+    addRecentlyViewed(event.slug);
+
+    const soldOutTiers = event.ticketTiers.filter((t) => t.soldOut).map((t) => t.name);
+    const delta = getUrgencyDelta(event.slug, event.availability);
+    const newlySoldOut = getNewlySoldOutTiers(event.slug, soldOutTiers);
+
+    // Show urgency notifications
+    if (delta !== null && delta > 5) {
+      addToast({
+        message: `${delta}% more sold since you last visited`,
+        type: "warning",
+        duration: 5000,
+      });
+    }
+
+    if (newlySoldOut.length > 0) {
+      addToast({
+        message: `${newlySoldOut.join(", ")} ${newlySoldOut.length === 1 ? "tier has" : "tiers have"} sold out since your last visit`,
+        type: "warning",
+        duration: 6000,
+      });
+    }
+
+    // Update stored urgency state
+    updateUrgency(event.slug, event.availability, soldOutTiers);
+  }, [event.slug]);
+
+  const handleAddToCart = () => {
+    if (!selectedTierData) return;
+    addToCart({
+      eventSlug: event.slug,
+      eventName: event.name,
+      clubName: event.clubName,
+      date: event.date,
+      tierName: selectedTierData.name,
+      tierId: selectedTierData.id,
+      price: selectedTierData.price,
+      quantity,
+    });
+    setAddedFeedback(true);
+    setTimeout(() => setAddedFeedback(false), 2000);
+    setQuantity(1);
+  };
 
   return (
     <div className="flex flex-col">
@@ -107,6 +165,11 @@ export function EventPageClient({ event }: { event: EventData }) {
                 </svg>
                 {event.clubName}
               </Link>
+            </motion.div>
+
+            {/* Live viewer count */}
+            <motion.div variants={fadeUp} className="mt-4">
+              <ViewerCount eventSlug={event.slug} availability={event.availability} />
             </motion.div>
           </motion.div>
         </div>
@@ -371,9 +434,36 @@ export function EventPageClient({ event }: { event: EventData }) {
                       </div>
 
                       {/* CTA */}
-                      <Button size="lg" className="w-full">
-                        Get Tickets — &euro;{total.toFixed(2)}
-                      </Button>
+                      <AnimatePresence mode="wait">
+                        {addedFeedback ? (
+                          <motion.div
+                            key="added"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Button size="lg" className="w-full pointer-events-none !bg-status-available/20 !border-status-available/30">
+                              <span className="flex items-center gap-2 justify-center">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                                Added to Cart
+                              </span>
+                            </Button>
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="cta"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Button size="lg" className="w-full" onClick={handleAddToCart}>
+                              Get Tickets — &euro;{total.toFixed(2)}
+                            </Button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
                       <p className="text-[11px] text-text-muted text-center">
                         Zero hidden fees. Price includes everything.

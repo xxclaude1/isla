@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button, GlassCard, Badge, AvailabilityBar } from "@/components/ui";
+import { useIslaStore } from "@/store/useIslaStore";
+import { getEventBySlug } from "@/lib/events";
 
 const featuredEvents = [
   {
@@ -136,7 +138,22 @@ const fadeUp = {
   },
 };
 
+const clubAccentMap: Record<string, string> = {
+  pacha: "#FF2D55",
+  amnesia: "#00D4FF",
+  "hi-ibiza": "#4364F7",
+  ushuaia: "#FF6A00",
+  dc10: "#00E676",
+  unvrs: "#B24BF3",
+};
+
 export default function Home() {
+  const { recentlyViewed } = useIslaStore();
+  const recentEvents = recentlyViewed
+    .map((slug) => getEventBySlug(slug))
+    .filter(Boolean)
+    .slice(0, 4);
+
   return (
     <div className="flex flex-col">
       {/* ===== HERO SECTION ===== */}
@@ -427,6 +444,73 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* ===== RECENTLY VIEWED ===== */}
+      {recentEvents.length > 0 && (
+        <section className="relative py-24 px-6">
+          <div className="mx-auto max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="mb-10"
+            >
+              <h2 className="font-display text-2xl md:text-3xl font-semibold">
+                Continue Where You Left Off
+              </h2>
+              <p className="text-text-secondary mt-2 text-sm">
+                Events you were checking out.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={stagger}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            >
+              {recentEvents.map((event) => {
+                if (!event) return null;
+                const eventAccent = clubAccentMap[event.clubSlug] || "#7F00FF";
+                const lowestPrice = Math.min(
+                  ...event.ticketTiers.filter((t) => !t.soldOut).map((t) => t.price)
+                );
+                return (
+                  <motion.div key={event.slug} variants={fadeUp}>
+                    <Link href={`/events/${event.slug}`}>
+                      <GlassCard className="relative overflow-hidden group">
+                        <div
+                          className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full"
+                          style={{ background: eventAccent }}
+                        />
+                        <div className="pl-3">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-mono" style={{ color: eventAccent }}>
+                              {event.day} {new Date(event.date).getDate()}{" "}
+                              {new Date(event.date).toLocaleDateString("en-GB", { month: "short" })}
+                            </span>
+                            <Badge>{event.genre}</Badge>
+                          </div>
+                          <h3 className="font-display text-lg font-semibold truncate">
+                            {event.name}
+                          </h3>
+                          <p className="text-sm text-text-muted">
+                            {event.clubName} &middot; From{" "}
+                            <span className="font-mono text-text-primary">&euro;{lowestPrice}</span>
+                          </p>
+                          <AvailabilityBar percentage={event.availability} showLabel={false} className="mt-2" />
+                        </div>
+                      </GlassCard>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* ===== VALUE PROPS ===== */}
       <section className="relative py-24 px-6">

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIslaStore } from "@/store/useIslaStore";
 
 const navLinks = [
   { href: "/clubs", label: "Clubs" },
@@ -15,6 +16,8 @@ const navLinks = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { cart, toggleCart } = useIslaStore();
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,7 +65,11 @@ export function Navbar() {
           {/* Cart + Mobile Toggle */}
           <div className="flex items-center gap-4">
             {/* Cart Button */}
-            <button className="relative p-2 text-text-secondary hover:text-text-primary transition-colors">
+            <button
+              onClick={toggleCart}
+              className="relative p-2 text-text-secondary hover:text-text-primary transition-colors"
+              aria-label="Open cart"
+            >
               <svg
                 width="20"
                 height="20"
@@ -77,6 +84,15 @@ export function Navbar() {
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
+              {cartCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-1 w-5 h-5 gradient-sunset rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                >
+                  {cartCount}
+                </motion.span>
+              )}
             </button>
 
             {/* Mobile Menu Toggle */}
@@ -150,7 +166,6 @@ export function Navbar() {
             { href: "/events", label: "Events", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
             { href: "/tonight", label: "Tonight", icon: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" },
             { href: "/vip", label: "VIP", icon: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" },
-            { href: "/cart", label: "Cart", icon: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -172,6 +187,21 @@ export function Navbar() {
               <span className="text-[10px] font-medium">{item.label}</span>
             </Link>
           ))}
+          {/* Cart tab - opens drawer */}
+          <button
+            onClick={toggleCart}
+            className="relative flex flex-col items-center gap-1 px-3 py-1 text-text-muted hover:text-text-primary transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            {cartCount > 0 && (
+              <span className="absolute -top-0.5 right-1 w-4 h-4 gradient-sunset rounded-full flex items-center justify-center text-[9px] font-bold text-white">
+                {cartCount}
+              </span>
+            )}
+            <span className="text-[10px] font-medium">Cart</span>
+          </button>
         </nav>
       </div>
     </>

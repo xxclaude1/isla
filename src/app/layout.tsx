@@ -5,6 +5,8 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { AuroraBackground } from "@/components/layout/AuroraBackground";
 import { Footer } from "@/components/layout/Footer";
+import { CartDrawer } from "@/components/layout/CartDrawer";
+import { ToastContainer } from "@/components/ui/ToastContainer";
 
 const clashDisplay = localFont({
   src: [
@@ -65,6 +67,8 @@ export default function RootLayout({
         <Navbar />
         <main className="relative z-10 flex-1">{children}</main>
         <Footer />
+        <CartDrawer />
+        <ToastContainer />
       </body>
     </html>
   );
