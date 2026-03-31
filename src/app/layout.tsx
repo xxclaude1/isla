@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
@@ -33,8 +33,19 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0a0a0f",
+};
+
 export const metadata: Metadata = {
-  title: "ISLA — Ibiza's Premier Nightlife Experience",
+  title: {
+    default: "ISLA — Ibiza's Premier Nightlife Experience",
+    template: "%s | ISLA",
+  },
   description:
     "The definitive way to experience Ibiza nightlife. Every club. Every night. One place. Official tickets for Pacha, Amnesia, Hï Ibiza, Ushuaïa, DC-10, and UNVRS.",
   keywords: [
@@ -48,7 +59,31 @@ export const metadata: Metadata = {
     "DC-10",
     "UNVRS",
     "Tomorrowland Ibiza",
+    "Ibiza VIP tables",
+    "Ibiza events 2026",
   ],
+  metadataBase: new URL("https://isla-ibiza.netlify.app"),
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    siteName: "ISLA",
+    title: "ISLA — Ibiza's Premier Nightlife Experience",
+    description:
+      "Every club. Every night. One place. Official tickets for Pacha, Amnesia, Hï Ibiza, Ushuaïa, DC-10, and UNVRS.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ISLA — Ibiza's Premier Nightlife Experience",
+    description:
+      "Every club. Every night. One place. Official tickets for all Ibiza superclubs.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -12,8 +12,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!club) return { title: "Club Not Found — ISLA" };
 
   return {
-    title: `${club.name} — ISLA | Ibiza Tickets`,
+    title: `${club.name} Ibiza — Tickets & Events`,
     description: `${club.tagline} Get official tickets for ${club.name} Ibiza. ${club.description.slice(0, 120)}...`,
+    openGraph: {
+      title: `${club.name} Ibiza | ISLA`,
+      description: `${club.tagline} Official tickets, VIP tables, and upcoming events.`,
+    },
   };
 }
 
